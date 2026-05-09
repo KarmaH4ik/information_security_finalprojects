@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>genpass — питч</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0e0f10;
+    --panel:#161719;
+    --ink:#ececec;
+    --muted:#9aa0a6;
+    --line:#26272a;
+    --accent:#f5d76e;
+    --accent-soft:#3a3320;
+    --green:#86efac;
+    --blue:#93c5fd;
+    --pink:#f9a8d4;
+    --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .reveal { font-family:'Inter', system-ui, -apple-system, sans-serif; color:var(--ink); }
+  .reveal .slides { text-align:left; }
+  html, body, .reveal-viewport { background:var(--bg); }
+
+  .reveal h1, .reveal h2, .reveal h3 { color:var(--ink); text-transform:none; letter-spacing:-0.02em; font-weight:600; }
+  .reveal h1 { font-size:3.0rem; line-height:1.05; margin:0 0 .5rem; }
+  .reveal h2 { font-size:2.0rem; line-height:1.1; margin:0 0 1.25rem; }
+  .reveal h3 { font-size:1.15rem; color:var(--muted); font-weight:500; margin:0 0 2rem; }
+  .reveal p, .reveal li { font-size:1.15rem; line-height:1.55; color:var(--ink); }
+  .reveal .muted { color:var(--muted); }
+  .reveal small { font-size:.9rem; color:var(--muted); }
+  .reveal a { color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent-soft); }
+  .reveal code { font-family:var(--mono); font-size:.95em; background:var(--panel); padding:.1em .35em; border-radius:4px; border:1px solid var(--line); color:var(--accent); }
+  .reveal pre { width:100%; box-shadow:none; }
+  .reveal pre code {
+    font-family:var(--mono); font-size:.85rem; line-height:1.55;
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:1.1rem 1.25rem; color:var(--ink); display:block; overflow:auto;
+  }
+
+  .reveal section { padding:0 2.5rem; }
+  .slide-no {
+    position:absolute; top:1.25rem; right:1.5rem;
+    font-family:var(--mono); font-size:.75rem; color:var(--muted); letter-spacing:.08em;
+  }
+  .eyebrow {
+    display:inline-block; font-family:var(--mono); font-size:.72rem;
+    color:var(--accent); letter-spacing:.18em; text-transform:uppercase;
+    padding:.3rem .6rem; border:1px solid var(--accent-soft);
+    border-radius:999px; margin-bottom:1.4rem;
+  }
+  .rule { height:1px; background:var(--line); margin:1.5rem 0; }
+
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; align-items:start; }
+  .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+  .card {
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:1.1rem 1.2rem;
+  }
+  .card h4 { margin:0 0 .35rem; font-size:1rem; color:var(--ink); font-weight:600; }
+  .card p { margin:0; font-size:.95rem; color:var(--muted); line-height:1.5; }
+  .pill {
+    display:inline-block; font-family:var(--mono); font-size:.7rem; color:var(--muted);
+    background:var(--panel); border:1px solid var(--line); border-radius:999px;
+    padding:.2rem .55rem; margin-right:.35rem; margin-bottom:.35rem;
+  }
+  ul.tight { margin:0; padding-left:1.1rem; }
+  ul.tight li { margin:.35rem 0; }
+  ul.bare { list-style:none; padding:0; margin:0; }
+  ul.bare li { padding:.55rem 0; border-bottom:1px solid var(--line); display:flex; gap:.75rem; }
+  ul.bare li:last-child { border-bottom:none; }
+  ul.bare .k { font-family:var(--mono); color:var(--accent); min-width:11rem; font-size:.95rem; }
+  ul.bare .v { color:var(--ink); flex:1; font-size:1rem; }
+
+  .title-wrap { display:flex; flex-direction:column; justify-content:center; height:100%; }
+  .title-cmd {
+    font-family:var(--mono); color:var(--muted); font-size:1.05rem;
+    margin-bottom:1.5rem;
+  }
+  .title-cmd .prompt { color:var(--green); margin-right:.5rem; }
+  .title-cmd .cursor {
+    display:inline-block; width:.55rem; height:1.1rem; background:var(--accent);
+    margin-left:.35rem; vertical-align:-2px;
+    animation:blink 1.05s steps(2,start) infinite;
+  }
+  @keyframes blink { to { visibility:hidden; } }
+  .title-meta { margin-top:2.25rem; font-family:var(--mono); font-size:.8rem; color:var(--muted); letter-spacing:.06em; }
+
+  .term {
+    background:#0a0a0b; border:1px solid var(--line); border-radius:10px;
+    overflow:hidden; font-family:var(--mono); font-size:.82rem; line-height:1.55;
+  }
+  .term-bar {
+    display:flex; align-items:center; gap:.4rem;
+    padding:.55rem .75rem; background:#141416; border-bottom:1px solid var(--line);
+  }
+  .term-bar .dot { width:.55rem; height:.55rem; border-radius:50%; background:#3a3a3d; }
+  .term-bar .dot.r{background:#ff5f57;} .term-bar .dot.y{background:#febc2e;} .term-bar .dot.g{background:#28c840;}
+  .term-bar .label { margin-left:.6rem; color:var(--muted); font-size:.72rem; }
+  .term-body { padding:1rem 1.15rem; color:var(--ink); }
+  .term-body .p { color:var(--green); }
+  .term-body .c { color:var(--blue); }
+  .term-body .o { color:var(--ink); }
+  .term-body .m { color:var(--muted); }
+  .term-body .a { color:var(--accent); }
+  .term-body .e { color:var(--pink); }
+
+  .arch {
+    display:grid; grid-template-columns:1fr 1.2fr 1fr; gap:.8rem; align-items:center;
+    font-family:var(--mono); font-size:.82rem;
+  }
+  .node {
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:.7rem .8rem; text-align:center; color:var(--ink);
+  }
+  .node .label { display:block; font-size:.65rem; color:var(--muted); margin-bottom:.2rem; letter-spacing:.1em; text-transform:uppercase; }
+  .node.accent { border-color:var(--accent-soft); background:linear-gradient(180deg, #1a1813, var(--panel)); }
+  .node.accent .label { color:var(--accent); }
+  .arrow { text-align:center; color:var(--muted); font-size:.85rem; }
+  .arrow .lbl { display:block; font-size:.62rem; letter-spacing:.08em; color:var(--muted); margin-top:.15rem; }
+
+  .dec {
+    width:100%; border-collapse:collapse; font-size:.95rem;
+  }
+  .dec th, .dec td { padding:.7rem .9rem; text-align:left; border-bottom:1px solid var(--line); vertical-align:top; }
+  .dec th { font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+  .dec td.k { font-family:var(--mono); color:var(--accent); width:18%; }
+  .dec td.v { width:32%; color:var(--ink); }
+  .dec td.r { color:var(--muted); width:50%; }
+
+  footer.foot {
+    position:absolute; bottom:1.1rem; left:2.5rem; right:2.5rem;
+    display:flex; justify-content:space-between;
+    font-family:var(--mono); font-size:.7rem; color:var(--muted); letter-spacing:.08em;
+  }
+</style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- 1. Титул -->
+    <section data-transition="fade">
+      <div class="title-wrap">
+        <div class="title-cmd"><span class="prompt">$</span>python3 genpass.py --length 24<span class="cursor"></span></div>
+        <h1>genpass</h1>
+        <h3>Маленький, проверяемый CLI на Python, который генерирует криптостойкие пароли локально — без сети, без зависимостей и без сюрпризов.</h3>
+        <div class="title-meta">ПИТЧ · v1.0 · CLI в одном файле · stdlib · secrets / CSPRNG</div>
+      </div>
+      <footer class="foot"><span>secure-password-generator-cli</span><span>01 / 06</span></footer>
+    </section>
+
+    <!-- 2. Проблема и мотивация -->
+    <section>
+      <span class="eyebrow">01 — Проблема</span>
+      <h2>Сгенерировать «надёжный» пароль легко сделать неправильно.</h2>
+      <div class="grid-2">
+        <div>
+          <p class="muted">Каждый из «очевидных» способов на практике подводит — по-своему.</p>
+          <ul class="tight">
+            <li><strong>Онлайн-генераторы</strong> требуют доверять чужому серверу секрет, который вы только собираетесь использовать.</li>
+            <li><strong><code>random.choice</code> в Python</strong> — Mersenne Twister, детерминирован и предсказуем по выходу.</li>
+            <li><strong>Наивные генераторы</strong> часто не проходят политику сайта (нет цифры, нет заглавной) — нужно генерировать заново.</li>
+            <li><strong><code>openssl rand -base64</code></strong> даёт байты, но не управляет алфавитом — в выходе живут <code>+/=</code>, ломающие URL и shell.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Кому это нужно</h4>
+          <p>Разработчикам, сисадминам и security-conscious пользователям, которым нужен крошечный, проверяемый скрипт для shell-алиасов, Makefile, playbook'ов Ansible и CI-пайплайнов.</p>
+          <div class="rule"></div>
+          <h4>Почему сейчас</h4>
+          <p>Стандартная библиотека Python с 3.6 содержит <code>secrets</code> поверх CSPRNG ОС. Не хватает только маленькой обёртки, которой можно доверять.</p>
+        </div>
+      </div>
+      <footer class="foot"><span>Проблема и мотивация</span><span>02 / 06</span></footer>
+    </section>
+
+    <!-- 3. Решение -->
+    <section>
+      <span class="eyebrow">02 — Решение</span>
+      <h2>Один файл. Один stdout. Никакой магии.</h2>
+      <div class="grid-2">
+        <div>
+          <p class="muted">Один Python-скрипт, который делает ровно три вещи в таком порядке:</p>
+          <ul class="bare">
+            <li><span class="k">→ argparse</span><span class="v">Разбор флагов: <code>--length</code>, <code>--lower</code>, <code>--upper</code>, <code>--digits</code>, <code>--symbols</code>.</span></li>
+            <li><span class="k">→ secrets.choice</span><span class="v">Криптостойкий выбор символов из пула включённых классов.</span></li>
+            <li><span class="k">→ stdout</span><span class="v">Один пароль, одна строка. Ошибки — в stderr, код возврата 2.</span></li>
+          </ul>
+          <p class="muted" style="margin-top:1.1rem;">Без сети. Без файлов. Без сторонних библиотек. ~100 строк, читается одним проходом.</p>
+        </div>
+        <div class="term">
+          <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="label">~/secure-password-generator-cli</span></div>
+          <div class="term-body">
+<span class="p">$</span> <span class="c">python3 genpass.py</span><br/>
+<span class="a">gT4!xQp9aL#bM2vR</span><br/><br/>
+<span class="p">$</span> <span class="c">python3 genpass.py --length 24 --no-symbols</span><br/>
+<span class="a">3kLp9aQrT8vXz1MnB7yWeJfH</span><br/><br/>
+<span class="m"># один файл, ноль зависимостей,</span><br/>
+<span class="m"># случайность из CSPRNG ОС.</span>
+          </div>
+        </div>
+      </div>
+      <footer class="foot"><span>Решение</span><span>03 / 06</span></footer>
+    </section>
+
+    <!-- 4. Архитектура системы -->
+    <section>
+      <span class="eyebrow">03 — Архитектура</span>
+      <h2>Линейный конвейер из четырёх стадий.</h2>
+      <div class="arch">
+        <div class="node"><span class="label">Вход</span>argv (флаги CLI)</div>
+        <div class="arrow">→<span class="lbl">--length, --lower, --upper…</span></div>
+        <div class="node accent"><span class="label">Шаг 1</span>parse_args()<br/><small>argparse + BooleanOptionalAction</small></div>
+
+        <div class="node accent" style="grid-column:3;"><span class="label">Шаг 2</span>build_pool()<br/><small>выбор классов символов</small></div>
+        <div class="arrow" style="grid-column:2;">↓<span class="lbl">pool + список классов</span></div>
+        <div class="node" style="grid-column:1;"><span class="label">Выход</span>пароль в stdout</div>
+
+        <div class="node" style="grid-column:1;"><span class="label">Финал</span>main() — print + exit code</div>
+        <div class="arrow" style="grid-column:2;">←<span class="lbl">N символов + перемешивание</span></div>
+        <div class="node accent" style="grid-column:3;"><span class="label">Шаг 3</span>generate_password()<br/><small>secrets.choice + SystemRandom</small></div>
+      </div>
+      <div class="rule" style="margin-top:1.3rem;"></div>
+      <div class="grid-3">
+        <div class="card"><h4>Один файл</h4><p><code>genpass.py</code> — четыре функции с единственной ответственностью. Каждый шаг тестируется независимо.</p></div>
+        <div class="card"><h4>Ноль зависимостей</h4><p>Только стандартная библиотека: <code>argparse</code>, <code>secrets</code>, <code>string</code>, <code>sys</code>. Никакого <code>requirements.txt</code>.</p></div>
+        <div class="card"><h4>Гарантия + перемешивание</h4><p>По одному символу каждого класса в первые слоты, затем <code>SystemRandom().shuffle</code> — политика без перегенерации.</p></div>
+      </div>
+      <footer class="foot"><span>Архитектура системы</span><span>04 / 06</span></footer>
+    </section>
+
+    <!-- 5. Ключевые технические решения -->
+    <section>
+      <span class="eyebrow">04 — Решения</span>
+      <h2>Что выбрали и почему.</h2>
+      <table class="dec">
+        <thead><tr><th>Область</th><th>Выбор</th><th>Обоснование</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Случайность</td><td class="v"><code>secrets</code>, не <code>random</code></td><td class="r">CSPRNG ОС (<code>/dev/urandom</code>, <code>BCryptGenRandom</code>); устойчив к восстановлению состояния по выходу.</td></tr>
+          <tr><td class="k">Зависимости</td><td class="v">Только stdlib</td><td class="r">Один файл, тривиальный аудит, ноль supply-chain рисков. Можно скопировать в любой репозиторий и запустить.</td></tr>
+          <tr><td class="k">Алфавит символов</td><td class="v">Свой <code>SYMBOLS</code></td><td class="r">Исключены <code>'</code>, <code>"</code>, <code>`</code>, <code>\</code> — символы, ломающие shell, SQL и копи-пейст.</td></tr>
+          <tr><td class="k">Политика</td><td class="v">Гарантия + перемешивание</td><td class="r">По одному символу каждого класса + <code>SystemRandom().shuffle</code>: предсказуемое время, без перегенераций.</td></tr>
+          <tr><td class="k">Эргономика CLI</td><td class="v"><code>BooleanOptionalAction</code></td><td class="r">Парные флаги <code>--symbols</code> / <code>--no-symbols</code> без ручного дублирования action-классов.</td></tr>
+          <tr><td class="k">Ошибки</td><td class="v">stderr + exit code 2</td><td class="r">Конвенция CLI: stdout остаётся чистым для пайпов, ошибки использования — отдельным каналом.</td></tr>
+        </tbody>
+      </table>
+      <footer class="foot"><span>Ключевые технические решения</span><span>05 / 06</span></footer>
+    </section>
+
+    <!-- 6. Демо / Результаты -->
+    <section>
+      <span class="eyebrow">05 — Демо и результаты</span>
+      <h2>От одной команды — к паролю, готовому для пайпа.</h2>
+      <div class="grid-2">
+        <div class="term">
+          <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="label">живой запуск</span></div>
+          <div class="term-body">
+<span class="p">$</span> <span class="c">python3 genpass.py</span><br/>
+<span class="a">gT4!xQp9aL#bM2vR</span><br/><br/>
+<span class="p">$</span> <span class="c">python3 genpass.py --length 6 \<br/>
+&nbsp;&nbsp;--no-lower --no-upper --no-symbols</span><br/>
+<span class="a">492817</span><br/><br/>
+<span class="p">$</span> <span class="c">python3 genpass.py --no-lower \<br/>
+&nbsp;&nbsp;--no-upper --no-digits --no-symbols</span><br/>
+<span class="e">genpass: error: at least one</span><br/>
+<span class="e">character class must be enabled</span><br/>
+<span class="p">$</span> <span class="c">echo $?</span><br/>
+2
+          </div>
+        </div>
+        <div class="term">
+          <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="label">встраивание в пайплайн</span></div>
+          <div class="term-body">
+<span class="p">$</span> <span class="c">pw=$(python3 genpass.py --length 32) \<br/>
+&nbsp;&nbsp;|| exit 1</span><br/><br/>
+<span class="p">$</span> <span class="c">python3 genpass.py --length 32 \<br/>
+&nbsp;&nbsp;--no-symbols | pbcopy</span><br/>
+<span class="m"># пароль в буфере обмена,</span><br/>
+<span class="m"># нигде не светится в логах</span><br/><br/>
+<span class="p">$</span> <span class="c">for i in 1 2 3; do<br/>
+&nbsp;&nbsp;python3 genpass.py --length 20<br/>
+done</span><br/>
+<span class="a">Lq8#mP2vR9!xKnB4tWzY</span><br/>
+<span class="a">7yH$kJ3pN8mQzL2vR!xT</span><br/>
+<span class="a">N4@bX9!rT6kLp2vMqWzH</span>
+          </div>
+        </div>
+      </div>
+      <div class="rule" style="margin-top:1.3rem;"></div>
+      <div class="grid-3">
+        <div class="card"><h4>~100 строк</h4><p>Вся программа целиком. Один файл, четыре функции, аудит за пять минут.</p></div>
+        <div class="card"><h4>0 зависимостей</h4><p>Только стандартная библиотека Python 3.9+. Никакого <code>pip install</code>.</p></div>
+        <div class="card"><h4>0 сетевых вызовов</h4><p>Случайность из CSPRNG ОС. Пароль не покидает машину пользователя.</p></div>
+      </div>
+      <footer class="foot"><span>Демо и результаты · спасибо</span><span>06 / 06</span></footer>
+    </section>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    controls: true,
+    progress: true,
+    slideNumber: false,
+    transition: 'slide',
+    transitionSpeed: 'default',
+    width: 1280,
+    height: 760,
+    margin: 0.06,
+    minScale: 0.4,
+    maxScale: 1.6,
+  });
+</script>
+</body>
+</html>

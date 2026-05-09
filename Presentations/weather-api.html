@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>weather-app-cli — питч</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0e0f10;
+    --panel:#161719;
+    --ink:#ececec;
+    --muted:#9aa0a6;
+    --line:#26272a;
+    --accent:#f5d76e;
+    --accent-soft:#3a3320;
+    --green:#86efac;
+    --blue:#93c5fd;
+    --pink:#f9a8d4;
+    --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .reveal { font-family:'Inter', system-ui, -apple-system, sans-serif; color:var(--ink); }
+  .reveal .slides { text-align:left; }
+  html, body, .reveal-viewport { background:var(--bg); }
+
+  .reveal h1, .reveal h2, .reveal h3 { color:var(--ink); text-transform:none; letter-spacing:-0.02em; font-weight:600; }
+  .reveal h1 { font-size:3.0rem; line-height:1.05; margin:0 0 .5rem; }
+  .reveal h2 { font-size:2.0rem; line-height:1.1; margin:0 0 1.25rem; }
+  .reveal h3 { font-size:1.15rem; color:var(--muted); font-weight:500; margin:0 0 2rem; }
+  .reveal p, .reveal li { font-size:1.15rem; line-height:1.55; color:var(--ink); }
+  .reveal .muted { color:var(--muted); }
+  .reveal small { font-size:.9rem; color:var(--muted); }
+  .reveal a { color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent-soft); }
+  .reveal code { font-family:var(--mono); font-size:.95em; background:var(--panel); padding:.1em .35em; border-radius:4px; border:1px solid var(--line); color:var(--accent); }
+  .reveal pre { width:100%; box-shadow:none; }
+  .reveal pre code {
+    font-family:var(--mono); font-size:.85rem; line-height:1.55;
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:1.1rem 1.25rem; color:var(--ink); display:block; overflow:auto;
+  }
+
+  .reveal section { padding:0 2.5rem; }
+  .slide-no {
+    position:absolute; top:1.25rem; right:1.5rem;
+    font-family:var(--mono); font-size:.75rem; color:var(--muted); letter-spacing:.08em;
+  }
+  .eyebrow {
+    display:inline-block; font-family:var(--mono); font-size:.72rem;
+    color:var(--accent); letter-spacing:.18em; text-transform:uppercase;
+    padding:.3rem .6rem; border:1px solid var(--accent-soft);
+    border-radius:999px; margin-bottom:1.4rem;
+  }
+  .rule { height:1px; background:var(--line); margin:1.5rem 0; }
+
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; align-items:start; }
+  .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+  .card {
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:1.1rem 1.2rem;
+  }
+  .card h4 { margin:0 0 .35rem; font-size:1rem; color:var(--ink); font-weight:600; }
+  .card p { margin:0; font-size:.95rem; color:var(--muted); line-height:1.5; }
+  .pill {
+    display:inline-block; font-family:var(--mono); font-size:.7rem; color:var(--muted);
+    background:var(--panel); border:1px solid var(--line); border-radius:999px;
+    padding:.2rem .55rem; margin-right:.35rem; margin-bottom:.35rem;
+  }
+  ul.tight { margin:0; padding-left:1.1rem; }
+  ul.tight li { margin:.35rem 0; }
+  ul.bare { list-style:none; padding:0; margin:0; }
+  ul.bare li { padding:.55rem 0; border-bottom:1px solid var(--line); display:flex; gap:.75rem; }
+  ul.bare li:last-child { border-bottom:none; }
+  ul.bare .k { font-family:var(--mono); color:var(--accent); min-width:11rem; font-size:.95rem; }
+  ul.bare .v { color:var(--ink); flex:1; font-size:1rem; }
+
+  .title-wrap { display:flex; flex-direction:column; justify-content:center; height:100%; }
+  .title-cmd {
+    font-family:var(--mono); color:var(--muted); font-size:1.05rem;
+    margin-bottom:1.5rem;
+  }
+  .title-cmd .prompt { color:var(--green); margin-right:.5rem; }
+  .title-cmd .cursor {
+    display:inline-block; width:.55rem; height:1.1rem; background:var(--accent);
+    margin-left:.35rem; vertical-align:-2px;
+    animation:blink 1.05s steps(2,start) infinite;
+  }
+  @keyframes blink { to { visibility:hidden; } }
+  .title-meta { margin-top:2.25rem; font-family:var(--mono); font-size:.8rem; color:var(--muted); letter-spacing:.06em; }
+
+  .term {
+    background:#0a0a0b; border:1px solid var(--line); border-radius:10px;
+    overflow:hidden; font-family:var(--mono); font-size:.82rem; line-height:1.55;
+  }
+  .term-bar {
+    display:flex; align-items:center; gap:.4rem;
+    padding:.55rem .75rem; background:#141416; border-bottom:1px solid var(--line);
+  }
+  .term-bar .dot { width:.55rem; height:.55rem; border-radius:50%; background:#3a3a3d; }
+  .term-bar .dot.r{background:#ff5f57;} .term-bar .dot.y{background:#febc2e;} .term-bar .dot.g{background:#28c840;}
+  .term-bar .label { margin-left:.6rem; color:var(--muted); font-size:.72rem; }
+  .term-body { padding:1rem 1.15rem; color:var(--ink); }
+  .term-body .p { color:var(--green); }
+  .term-body .c { color:var(--blue); }
+  .term-body .o { color:var(--ink); }
+  .term-body .m { color:var(--muted); }
+  .term-body .a { color:var(--accent); }
+
+  .arch {
+    display:grid; grid-template-columns:1fr 1.2fr 1fr; gap:.8rem; align-items:center;
+    font-family:var(--mono); font-size:.82rem;
+  }
+  .node {
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:.7rem .8rem; text-align:center; color:var(--ink);
+  }
+  .node .label { display:block; font-size:.65rem; color:var(--muted); margin-bottom:.2rem; letter-spacing:.1em; text-transform:uppercase; }
+  .node.accent { border-color:var(--accent-soft); background:linear-gradient(180deg, #1a1813, var(--panel)); }
+  .node.accent .label { color:var(--accent); }
+  .arrow { text-align:center; color:var(--muted); font-size:.85rem; }
+  .arrow .lbl { display:block; font-size:.62rem; letter-spacing:.08em; color:var(--muted); margin-top:.15rem; }
+
+  .dec {
+    width:100%; border-collapse:collapse; font-size:.95rem;
+  }
+  .dec th, .dec td { padding:.7rem .9rem; text-align:left; border-bottom:1px solid var(--line); vertical-align:top; }
+  .dec th { font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+  .dec td.k { font-family:var(--mono); color:var(--accent); width:18%; }
+  .dec td.v { width:32%; color:var(--ink); }
+  .dec td.r { color:var(--muted); width:50%; }
+
+  footer.foot {
+    position:absolute; bottom:1.1rem; left:2.5rem; right:2.5rem;
+    display:flex; justify-content:space-between;
+    font-family:var(--mono); font-size:.7rem; color:var(--muted); letter-spacing:.08em;
+  }
+</style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- 1. Титул -->
+    <section data-transition="fade">
+      <div class="title-wrap">
+        <div class="title-cmd"><span class="prompt">$</span>python weather.py San Francisco<span class="cursor"></span></div>
+        <h1>weather-app-cli</h1>
+        <h3>Лёгкая Python-утилита для терминала, которая превращает разовые запросы погоды в персональную, доступную для запросов историю.</h3>
+        <div class="title-meta">ПИТЧ · v1.0 · CLI в одном файле · SQLite · Open-Meteo</div>
+      </div>
+      <footer class="foot"><span>weather-app-cli</span><span>01 / 06</span></footer>
+    </section>
+
+    <!-- 2. Проблема и мотивация -->
+    <section>
+      <span class="eyebrow">01 — Проблема</span>
+      <h2>Погодные приложения забывают.</h2>
+      <div class="grid-2">
+        <div>
+          <p class="muted">Любое потребительское приложение отвечает на вопрос <em>«какая погода прямо сейчас?»</em> и забывает ответ, как только окно закрывается.</p>
+          <ul class="tight">
+            <li>Нет записи о том, насколько холодно <em>на самом деле</em> было во вторник.</li>
+            <li>Нет способа сравнить города, которые вы проверяли неделями.</li>
+            <li>Нет чистого набора данных, чтобы написать скрипт, построить график или экспортировать.</li>
+            <li>Большинство API закрывают даже базовые запросы за ключами и квотами.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Кому это нужно</h4>
+          <p>Разработчикам, которые живут в терминале; энтузиастам, ведущим журнал локального микроклимата; всем, кто открывал виджет погоды дважды за день и хотел, чтобы он что-то помнил.</p>
+          <div class="rule"></div>
+          <h4>Почему сейчас</h4>
+          <p>Open-Meteo предоставляет бесплатные данные о погоде без ключей. Не хватает только маленького, локального и постоянного клиента.</p>
+        </div>
+      </div>
+      <footer class="foot"><span>Проблема и мотивация</span><span>02 / 06</span></footer>
+    </section>
+
+    <!-- 3. Решение -->
+    <section>
+      <span class="eyebrow">02 — Решение</span>
+      <h2>Одна команда. Два результата.</h2>
+      <div class="grid-2">
+        <div>
+          <p class="muted">Один Python-скрипт, который делает ровно две вещи в таком порядке:</p>
+          <ul class="bare">
+            <li><span class="k">→ stdout</span><span class="v">Чистая, читаемая сводка прямо в терминале.</span></li>
+            <li><span class="k">→ ~/.weather-app-cli</span><span class="v">Запись в SQLite, добавляемая поверх предыдущих, с полным сырым ответом API.</span></li>
+          </ul>
+          <p class="muted" style="margin-top:1.1rem;">Без API-ключей. Одна зависимость (<code>requests</code>). Работает в cron, в скриптах, за shell-алиасами — везде, где работает Python 3.</p>
+        </div>
+        <div class="term">
+          <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="label">~/weather-app-cli</span></div>
+          <div class="term-body">
+<span class="p">$</span> <span class="c">python weather.py San Francisco</span><br/>
+<span class="a">San Francisco, United States</span><br/>
+Now: 14.2°C (feels 13.0°C) · Partly cloudy<br/>
+Humidity: 72% · Wind: 12.4 km/h<br/>
+Today: H 18.4°C / L 11.1°C<br/><br/>
+<span class="m"># также записано:</span><br/>
+<span class="m">~/.weather-app-cli/weather.db ← +1 строка</span>
+          </div>
+        </div>
+      </div>
+      <footer class="foot"><span>Решение</span><span>03 / 06</span></footer>
+    </section>
+
+    <!-- 4. Архитектура системы -->
+    <section>
+      <span class="eyebrow">03 — Архитектура</span>
+      <h2>Линейный однопроцессный конвейер.</h2>
+      <div class="arch">
+        <div class="node"><span class="label">Вход</span>Пользователь / shell</div>
+        <div class="arrow">→<span class="lbl">название города</span></div>
+        <div class="node accent"><span class="label">Шаг 1</span>geocode()<br/><small>Open-Meteo Geocoding</small></div>
+
+        <div class="node accent" style="grid-column:3;"><span class="label">Шаг 2</span>fetch_weather()<br/><small>Open-Meteo Forecast</small></div>
+        <div class="arrow" style="grid-column:2;">↓<span class="lbl">широта / долгота</span></div>
+        <div class="node" style="grid-column:1;"><span class="label">Выход</span>Сводка в терминале</div>
+
+        <div class="node" style="grid-column:1;"><span class="label">Хранение</span>SQLite weather.db</div>
+        <div class="arrow" style="grid-column:2;">←<span class="lbl">INSERT строки + raw_json</span></div>
+        <div class="node accent" style="grid-column:3;"><span class="label">Шаг 3</span>format + save_record()</div>
+      </div>
+      <div class="rule" style="margin-top:1.3rem;"></div>
+      <div class="grid-3">
+        <div class="card"><h4>Один файл</h4><p><code>weather.py</code> — семь маленьких функций с единственной ответственностью. Каждый шаг тестируется независимо.</p></div>
+        <div class="card"><h4>Только добавление</h4><p>Одна таблица. Ничего не перезаписывается. Сырой JSON хранится целиком — будущие изменения схемы не разрушают данные.</p></div>
+        <div class="card"><h4>Остальное — ОС</h4><p>Повторы, расписание, кэш → cron, shell, systemd. CLI намеренно остаётся маленьким.</p></div>
+      </div>
+      <footer class="foot"><span>Архитектура системы</span><span>04 / 06</span></footer>
+    </section>
+
+    <!-- 5. Ключевые технические решения -->
+    <section>
+      <span class="eyebrow">04 — Решения</span>
+      <h2>Что выбрали и почему.</h2>
+      <table class="dec">
+        <thead><tr><th>Область</th><th>Выбор</th><th>Обоснование</th></tr></thead>
+        <tbody>
+          <tr><td class="k">API</td><td class="v">Open-Meteo (без ключа)</td><td class="r">Убирает главное препятствие на старте — никаких регистраций, квот и ротации секретов.</td></tr>
+          <tr><td class="k">Хранение</td><td class="v">SQLite, один файл</td><td class="r">Без настройки, доступно из любого инструмента, тривиально бэкапится. Append-only схема сохраняет историю.</td></tr>
+          <tr><td class="k">Схема</td><td class="v">Плоские поля + raw_json</td><td class="r">Горячие поля индексируются; полный ответ хранится дословно — новые поля можно достать позже без повторного запроса.</td></tr>
+          <tr><td class="k">Зависимости</td><td class="v">Только <code>requests</code></td><td class="r">Всё остальное (argparse, sqlite3, json, pathlib) идёт со стандартной библиотекой Python.</td></tr>
+          <tr><td class="k">Эргономика CLI</td><td class="v"><code>nargs="+"</code> для города</td><td class="r">Названия из нескольких слов (<code>New York</code>) работают без кавычек — соответствует тому, как люди реально печатают.</td></tr>
+          <tr><td class="k">Ошибки</td><td class="v">stderr + exit code 2</td><td class="r">Чёткое отделение от stdout позволяет инструменту безопасно встраиваться в пайплайны и скрипты.</td></tr>
+        </tbody>
+      </table>
+      <footer class="foot"><span>Ключевые технические решения</span><span>05 / 06</span></footer>
+    </section>
+
+    <!-- 6. Демо / Результаты -->
+    <section>
+      <span class="eyebrow">05 — Демо и результаты</span>
+      <h2>От одной команды — к истории, доступной для запросов.</h2>
+      <div class="grid-2">
+        <div class="term">
+          <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="label">живой запрос</span></div>
+          <div class="term-body">
+<span class="p">$</span> <span class="c">python weather.py Reykjavik</span><br/>
+<span class="a">Reykjavík, Iceland</span><br/>
+Now: 4.8°C (feels 1.2°C) · Light rain<br/>
+Humidity: 88% · Wind: 22.6 km/h<br/>
+Today: H 6.1°C / L 3.0°C<br/><br/>
+<span class="p">$</span> <span class="c">python weather.py Atlantis</span><br/>
+<span class="m">weather: error: city 'Atlantis' not found</span><br/>
+<span class="p">$</span> <span class="c">echo $?</span><br/>
+2
+          </div>
+        </div>
+        <div class="term">
+          <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="label">ваша история, через SQL</span></div>
+          <div class="term-body">
+<span class="p">$</span> <span class="c">sqlite3 ~/.weather-app-cli/weather.db \<br/>
+&nbsp;&nbsp;"SELECT fetched_at, resolved_name,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;temperature_c, weather_description<br/>
+&nbsp;&nbsp;&nbsp;FROM weather_lookups<br/>
+&nbsp;&nbsp;&nbsp;ORDER BY id DESC LIMIT 5;"</span><br/><br/>
+<span class="a">2026-05-07T08:14</span> | San Francisco | 14.2 | Partly cloudy<br/>
+<span class="a">2026-05-07T08:13</span> | Reykjavík&nbsp;&nbsp;&nbsp;&nbsp; | 4.8&nbsp; | Light rain<br/>
+<span class="a">2026-05-06T19:02</span> | Tokyo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 21.5 | Clear<br/>
+<span class="a">2026-05-06T07:45</span> | New York&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 11.0 | Overcast<br/>
+<span class="a">2026-05-05T22:11</span> | San Francisco | 13.7 | Mainly clear
+          </div>
+        </div>
+      </div>
+      <div class="rule" style="margin-top:1.3rem;"></div>
+      <div class="grid-3">
+        <div class="card"><h4>~220 строк</h4><p>Вся программа целиком. Один файл, семь функций.</p></div>
+        <div class="card"><h4>1 зависимость</h4><p>Только <code>requests</code>. Всё остальное — стандартная библиотека.</p></div>
+        <div class="card"><h4>0 API-ключей</h4><p>Клонировать, <code>pip install</code>, запустить. Без регистраций и секретов.</p></div>
+      </div>
+      <footer class="foot"><span>Демо и результаты · спасибо</span><span>06 / 06</span></footer>
+    </section>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    controls: true,
+    progress: true,
+    slideNumber: false,
+    transition: 'slide',
+    transitionSpeed: 'default',
+    width: 1280,
+    height: 760,
+    margin: 0.06,
+    minScale: 0.4,
+    maxScale: 1.6,
+  });
+</script>
+</body>
+</html>
